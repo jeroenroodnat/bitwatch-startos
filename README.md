@@ -9,7 +9,7 @@
 - [yq](https://mikefarah.gitbook.io/yq)
 - [toml](https://crates.io/crates/toml-cli)
 - [make](https://www.gnu.org/software/make)
-- [embassy-sdk]
+- [startos-sdk]
 
 ## Cloning
 
