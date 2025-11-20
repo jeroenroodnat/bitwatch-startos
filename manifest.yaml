@@ -1,0 +1,96 @@
+id: bitwatch
+title: "Bitwatch"
+version: 1.7.2
+release-notes: |
+  - Initial StartOS package release
+license: MIT 
+wrapper-repo: "https://github.com/jeroenroodnat/bitwatch-startos"
+upstream-repo: "https://github.com/zapomatic/bitwatch"
+support-site: "https://github.com/zapomatic/bitwatch/issues"
+marketing-site: "https://github.com/zapomatic/bitwatch"
+build: ["make"]
+description:
+  short: Monitor Bitcoin addresses
+  long: |
+    Monitor Bitcoin addresses in the mempool and on-chain using the mempool.space API. Run your own node and monitor your own addresses privately. Get Telegram notifications for onchain and mempool activity relating to addresses.
+assets:
+  license: LICENSE
+  icon: icon.png
+  instructions: instructions.md
+main:
+  type: docker
+  image: main
+  entrypoint: docker_entrypoint.sh
+  args: []
+  mounts:
+    main: /app/server/data
+hardware-requirements:
+  arch:
+    - x86_64
+    - aarch64
+health-checks:
+  interface:
+    name: Web UI
+    success-message: Ready to be visited in a web browser
+    type: script
+properties:
+  type: script
+dependencies: {}
+volumes:
+  main:
+    type: data
+interfaces:
+  main:
+    name: Web UI
+    description: Serves the Web UI via HTTP and websocket.
+    lan-config:
+      443:
+        ssl: true
+        internal: 3117
+      3117:
+        ssl: true
+        internal: 3117
+    ui: true
+    protocols:
+      - tcp
+      - http
+      - ws
+alerts: {}
+backup:
+  create:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: compat
+    args:
+      - duplicity
+      - create
+      - /mnt/backup
+      - /app/server/data
+    mounts:
+      BACKUP: /mnt/backup
+      main: /app/server/data
+    io-format: yaml
+  restore:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: compat
+    args:
+      - duplicity
+      - restore
+      - /mnt/backup
+      - /app/server/data
+    mounts:
+      BACKUP: /mnt/backup
+      main: /app/server/data
+    io-format: yaml
+migrations:
+  from:
+    "*":
+      type: script
+      args: ["to"]
+  to:
+    "*":
+      type: script
+      args: ["to"]
